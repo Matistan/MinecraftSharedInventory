@@ -1,0 +1,6 @@
+name: MinecraftSharedInventory
+version: '${project.version}'
+main: me.matistan05.minecraftsharedinventory.MinecraftSharedInventory
+api-version: 1.16
+authors: [Matistan]
+description: Fun little plugin where every player has the same inventory!
