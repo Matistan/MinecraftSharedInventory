@@ -1,0 +1,13 @@
+# *********************************************************
+# Thank you for using this plugin! <3
+# Author: Matistan
+# If you enjoy this plugin, please rate it on spigotmc.org:
+# https://www.spigotmc.org/resources/death-swap.109401/
+# *********************************************************
+
+# Set to true to set the time to day automatically when the game starts.
+timeSetDayOnStart: true
+# Set to true to set the weather to clear automatically when the game starts.
+weatherClearOnStart: true
+# Set to true to take away OPs for the duration of the game.
+takeAwayOps: true
