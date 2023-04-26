@@ -15,7 +15,7 @@ public final class Main extends JavaPlugin {
                 "Thank you for using this plugin! <3\n" +
                 "Author: Matistan\n" +
                 "If you enjoy this plugin, please rate it on spigotmc.org:\n" +
-                "https://www.spigotmc.org/resources/death-swap.109401/\n" +
+                "https://www.spigotmc.org/resources/shared-inventory.109491/\n" +
                 "*********************************************************");
     }
 }
