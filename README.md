@@ -44,7 +44,7 @@ Edit the `plugins/MinecraftSharedInventory/config.yml` file to change the follow
 |---------------------|-----------------------------------------------------------------------------|---------|---------------------------------------------------------------|
 | timeSetDayOnStart   | Set to true to set the time to day automatically when the game starts.      | boolean | true                                                          |
 | weatherClearOnStart | Set to true to set the weather to clear automatically when the game starts. | boolean | true                                                          |
-| takeAwayOps         | Set to true to take away OPs for the duration of the game.                  | boolean | false; true, if you play with friends                         |
+| takeAwayOps         | Set to true to take away OPs for the duration of the game.                  | boolean | true                                                          |
 | usePermissions      | Set to true to require users to have permission to use certain commands.    | boolean | false; true if you don't trust the people you're playing with |
 
 ## Permissions
