@@ -37,6 +37,10 @@ public class SharedInventoryCommand implements CommandExecutor {
             return true;
         }
         if(args[0].equals("help")) {
+            if(!p.hasPermission("sharedinventory.help") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if(args.length != 1)
             {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /sharedinventory help");
@@ -54,12 +58,16 @@ public class SharedInventoryCommand implements CommandExecutor {
             return true;
         }
         if(args[0].equals("list")) {
+            if(!p.hasPermission("sharedinventory.list") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if(args.length != 1)
             {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /sharedinventory help");
                 return true;
             }
-            if(players.size() == 0) {
+            if(players.isEmpty()) {
                 p.sendMessage(ChatColor.RED + "There is no player in your game!");
                 return true;
             }
@@ -71,6 +79,10 @@ public class SharedInventoryCommand implements CommandExecutor {
             return true;
         }
         if (args[0].equals("add")) {
+            if(!p.hasPermission("sharedinventory.add") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if(args.length < 2) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /sharedinventory help");
                 return true;
@@ -90,6 +102,10 @@ public class SharedInventoryCommand implements CommandExecutor {
             return true;
         }
         if (args[0].equals("remove")) {
+            if(!p.hasPermission("sharedinventory.remove") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if(args.length < 2) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
@@ -106,12 +122,16 @@ public class SharedInventoryCommand implements CommandExecutor {
             } else {
                 p.sendMessage(ChatColor.RED + "Could not remove " + (args.length == 2 ? "this player!" : "these players!"));
             }
-            if(players.size() == 0) {
+            if(players.isEmpty()) {
                 reset();
             }
             return true;
         }
         if(args[0].equals("reset")) {
+            if(!p.hasPermission("sharedinventory.reset") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if (args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /sharedinventory help");
                 return true;
@@ -121,11 +141,15 @@ public class SharedInventoryCommand implements CommandExecutor {
             return true;
         }
         if(args[0].equals("start")) {
+            if(!p.hasPermission("sharedinventory.start") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if (args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /sharedinventory help");
                 return true;
             }
-            if (players.size() == 0) {
+            if (players.isEmpty()) {
                 p.sendMessage(ChatColor.RED + "There are no players in your game!");
                 return true;
             }

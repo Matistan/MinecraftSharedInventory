@@ -7,3 +7,13 @@ description: Fun little plugin where every player has the same inventory!
 commands:
   sharedinventory:
     description: this command sets up the whole game
+permissions:
+  sharedinventory.sharedinventory:
+    description: Allows the player to use all /sharedinventory commands
+    children:
+      sharedinventory.add: true
+      sharedinventory.remove: true
+      sharedinventory.start: true
+      sharedinventory.reset: true
+      sharedinventory.list: true
+      sharedinventory.help: true
