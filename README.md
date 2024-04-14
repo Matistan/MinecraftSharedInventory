@@ -30,7 +30,9 @@ With this fun little plugin, everyone shares the same inventory. This makes the 
 ## Commands
 
 - `/sharedinventory add <player> <player> ... ` - adds players
+- `/sharedinventory add @a` - adds all players
 - `/sharedinventory remove <player> <player> ... ` - removes players
+- `/sharedinventory remove @a` - removes all players
 - `/sharedinventory start` - starts the game
 - `/sharedinventory reset` - resets the game
 - `/sharedinventory list` - shows a list of players in the game of shared inventory

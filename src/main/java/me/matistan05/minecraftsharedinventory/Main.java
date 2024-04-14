@@ -18,4 +18,9 @@ public final class Main extends JavaPlugin {
                 "https://www.spigotmc.org/resources/shared-inventory.109491/\n" +
                 "*********************************************************");
     }
+
+    @Override
+    public void onDisable() {
+        SharedInventoryCommand.reset();
+    }
 }
