@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static me.matistan05.minecraftsharedinventory.commands.SharedInventoryCommand.players;
 
