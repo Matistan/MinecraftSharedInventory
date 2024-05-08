@@ -24,8 +24,8 @@ With this fun little plugin, everyone shares the same inventory. This makes the 
 ## How to use it
 
 - drag the .jar file from the [Release tab](https://github.com/Matistan/MinecraftSharedInventory/releases) to your plugins folder on your server.
-- select players to your game using `/sharedinventory add` command
 - type `/sharedinventory start` to start!
+- if you don't want to play with every player on the server, change the rule `playWithEveryone` to false, and choose the players using `/sharedinventory add` command
 
 ## Commands
 
