@@ -6,7 +6,7 @@
 
     <groupId>me.matistan05</groupId>
     <artifactId>MinecraftSharedInventory</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
     <packaging>jar</packaging>
 
     <name>MinecraftSharedInventory</name>
