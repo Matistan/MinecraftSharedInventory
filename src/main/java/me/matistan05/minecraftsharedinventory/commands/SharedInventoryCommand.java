@@ -91,6 +91,10 @@ public class SharedInventoryCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /sharedinventory help");
                 return true;
             }
+            if (main.getConfig().getBoolean("playWithEveryone")) {
+                p.sendMessage(ChatColor.AQUA + "Everyone is in the game!");
+                return true;
+            }
             if (players.isEmpty()) {
                 p.sendMessage(ChatColor.RED + "There is no player in your game!");
                 return true;
