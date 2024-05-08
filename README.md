@@ -36,8 +36,8 @@ With this fun little plugin, everyone shares the same inventory. This makes the 
 - `/sharedinventory start` - starts the game
 - `/sharedinventory reset` - resets the game
 - `/sharedinventory list` - shows a list of players in the game of shared inventory
+- `/sharedinventory rules <rule> value(optional)` - changes some additional rules of the game (in config.yml)
 - `/sharedinventory help` - shows a list of shared inventory commands
-- `/sharedinventory rules <rule> value(optional)` - changes some additional rules of the game (in config.yml
 
 ## Configuration Options
 
