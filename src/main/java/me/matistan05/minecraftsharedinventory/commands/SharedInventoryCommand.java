@@ -51,7 +51,7 @@ public class SharedInventoryCommand implements CommandExecutor {
             p.sendMessage(ChatColor.YELLOW + "/sharedinventory start " + ChatColor.AQUA + "- starts the shared inventory game");
             p.sendMessage(ChatColor.YELLOW + "/sharedinventory reset " + ChatColor.AQUA + "- resets the game");
             p.sendMessage(ChatColor.YELLOW + "/sharedinventory list " + ChatColor.AQUA + "- shows a list of players in shared inventory game");
-            p.sendMessage(ChatColor.YELLOW + "/sharedinventory rules <rule> value(optional) " + ChatColor.AQUA + "- changes some additional rules of the game (in config.yml");
+            p.sendMessage(ChatColor.YELLOW + "/sharedinventory rules <rule> value(optional) " + ChatColor.AQUA + "- changes some additional rules of the game (in config.yml)");
             p.sendMessage(ChatColor.YELLOW + "/sharedinventory help " + ChatColor.AQUA + "- shows a list of shared inventory commands");
             p.sendMessage(ChatColor.GREEN + "----------------------------------");
             return true;
