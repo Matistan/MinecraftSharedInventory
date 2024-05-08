@@ -16,4 +16,5 @@ permissions:
       sharedinventory.start: true
       sharedinventory.reset: true
       sharedinventory.list: true
+      sharedinventory.rules: true
       sharedinventory.help: true

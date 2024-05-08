@@ -1,5 +1,6 @@
 package me.matistan05.minecraftsharedinventory.commands;
 
+import me.matistan05.minecraftsharedinventory.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -9,10 +10,18 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static me.matistan05.minecraftsharedinventory.commands.SharedInventoryCommand.players;
 
 public class SharedInventoryCompleter implements TabCompleter {
+
+    private static Main main;
+
+    public SharedInventoryCompleter(Main main) {
+        SharedInventoryCompleter.main = main;
+    }
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> list = new ArrayList<>();
@@ -34,6 +43,20 @@ public class SharedInventoryCompleter implements TabCompleter {
             }
             if (startsWith("help", args[0])) {
                 list.add("help");
+            }
+            if (startsWith("rules", args[0])) {
+                list.add("rules");
+            }
+        } else if (args.length > 1 && args[0].equals("rules")) {
+            if (args.length == 2) {
+                list = main.getConfig().getKeys(false).stream().filter(s -> startsWith(s, args[1])).collect(Collectors.toList());
+            } else if (args.length == 3 && main.getConfig().contains(args[1])) {
+                if (startsWith("true", args[2])) {
+                    list.add("true");
+                }
+                if (startsWith("false", args[2])) {
+                    list.add("false");
+                }
             }
         } else if (args.length > 1 && (args[0].equals("add") || args[0].equals("remove"))) {
             if (args.length > 2 && args[1].equals("@a")) {

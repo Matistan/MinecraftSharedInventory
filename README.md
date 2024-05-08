@@ -37,17 +37,19 @@ With this fun little plugin, everyone shares the same inventory. This makes the 
 - `/sharedinventory reset` - resets the game
 - `/sharedinventory list` - shows a list of players in the game of shared inventory
 - `/sharedinventory help` - shows a list of shared inventory commands
+- `/sharedinventory rules <rule> value(optional)` - changes some additional rules of the game (in config.yml
 
 ## Configuration Options
 
-Edit the `plugins/MinecraftSharedInventory/config.yml` file to change the following options:
+Use the command `/sharedinventory rules` or edit the `plugins/MinecraftSharedInventory/config.yml` file to change the following options:
 
-| Key                 | Description                                                                 | Type    | recommended                                                   |
-|---------------------|-----------------------------------------------------------------------------|---------|---------------------------------------------------------------|
-| timeSetDayOnStart   | Set to true to set the time to day automatically when the game starts.      | boolean | true                                                          |
-| weatherClearOnStart | Set to true to set the weather to clear automatically when the game starts. | boolean | true                                                          |
-| takeAwayOps         | Set to true to take away OPs for the duration of the game.                  | boolean | true                                                          |
-| usePermissions      | Set to true to require users to have permission to use certain commands.    | boolean | false; true if you don't trust the people you're playing with |
+| Key                 | Description                                                                                                        | Type    | recommended                                                   |
+|---------------------|--------------------------------------------------------------------------------------------------------------------|---------|---------------------------------------------------------------|
+| timeSetDayOnStart   | Set to true to set the time to day automatically when the game starts.                                             | boolean | true                                                          |
+| weatherClearOnStart | Set to true to set the weather to clear automatically when the game starts.                                        | boolean | true                                                          |
+| playWithEveryone    | Set to true to not have to use '/sharedinventory add' every time, and instead play with every player on the server | boolean | true                                                          |
+| takeAwayOps         | Set to true to take away OPs for the duration of the game.                                                         | boolean | true                                                          |
+| usePermissions      | Set to true to require users to have permission to use certain commands.                                           | boolean | false; true if you don't trust the people you're playing with |
 
 ## Permissions
 
@@ -62,6 +64,7 @@ If `usePermissions` is set to `true` in the `config.yml` file, players without o
 | sharedinventory.reset           | Allows the player to use the `/sharedinventory reset` command.  |
 | sharedinventory.list            | Allows the player to use the `/sharedinventory list` command.   |
 | sharedinventory.help            | Allows the player to use the `/sharedinventory help` command.   |
+| sharedinventory.rules           | Allows the player to use the `/sharedinventory rules` command.  |
 
 ### Bugs & Issues
 

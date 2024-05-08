@@ -45,12 +45,41 @@ public class SharedInventoryCommand implements CommandExecutor {
             p.sendMessage(ChatColor.GREEN + "------- " + ChatColor.WHITE + " Minecraft Shared Inventory " + ChatColor.GREEN + "----------");
             p.sendMessage(ChatColor.BLUE + "Here is a list of shared inventory commands:");
             p.sendMessage(ChatColor.YELLOW + "/sharedinventory add <player> <player> ... " + ChatColor.AQUA + "- adds players to the game");
+            p.sendMessage(ChatColor.YELLOW + "/sharedinventory add @a " + ChatColor.AQUA + "- adds all players");
             p.sendMessage(ChatColor.YELLOW + "/sharedinventory remove <player> <player> ... " + ChatColor.AQUA + "- removes  players from the game");
+            p.sendMessage(ChatColor.YELLOW + "/sharedinventory remove @a " + ChatColor.AQUA + "- removes all players");
             p.sendMessage(ChatColor.YELLOW + "/sharedinventory start " + ChatColor.AQUA + "- starts the shared inventory game");
             p.sendMessage(ChatColor.YELLOW + "/sharedinventory reset " + ChatColor.AQUA + "- resets the game");
             p.sendMessage(ChatColor.YELLOW + "/sharedinventory list " + ChatColor.AQUA + "- shows a list of players in shared inventory game");
+            p.sendMessage(ChatColor.YELLOW + "/sharedinventory rules <rule> value(optional) " + ChatColor.AQUA + "- changes some additional rules of the game (in config.yml");
             p.sendMessage(ChatColor.YELLOW + "/sharedinventory help " + ChatColor.AQUA + "- shows a list of shared inventory commands");
             p.sendMessage(ChatColor.GREEN + "----------------------------------");
+            return true;
+        }
+        if (args[0].equals("rules")) {
+            if (!p.hasPermission("sharedinventory.rules") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
+            if (args.length != 3 && args.length != 2) {
+                p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /sharedinventory help");
+                return true;
+            }
+            if (!main.getConfig().contains(args[1])) {
+                p.sendMessage(ChatColor.RED + "There is no such rule. See the config.yml file for more information.");
+                return true;
+            }
+            if (args.length == 2) {
+                p.sendMessage(ChatColor.AQUA + "The value of the rule " + args[1] + " is: " + main.getConfig().get(args[1]));
+                return true;
+            }
+            if (!args[2].equals("true") && !args[2].equals("false")) {
+                p.sendMessage(ChatColor.RED + "The value must be true or false!");
+                return true;
+            }
+            main.getConfig().set(args[1], Boolean.parseBoolean(args[2]));
+            main.saveConfig();
+            p.sendMessage(ChatColor.AQUA + "The value of the rule " + args[1] + " has been changed to: " + args[2]);
             return true;
         }
         if (args[0].equals("list")) {
@@ -182,6 +211,12 @@ public class SharedInventoryCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /sharedinventory help");
                 return true;
             }
+            if (main.getConfig().getBoolean("playWithEveryone")) {
+                players.clear();
+                for (Player target : Bukkit.getOnlinePlayers()) {
+                    players.add(target.getName());
+                }
+            }
             if (players.isEmpty()) {
                 p.sendMessage(ChatColor.RED + "There are no players in your game!");
                 return true;
@@ -211,7 +246,7 @@ public class SharedInventoryCommand implements CommandExecutor {
                 player.setGameMode(GameMode.SURVIVAL);
                 player.setHealth(20);
                 player.setFoodLevel(20);
-                player.setSaturation(20);
+                player.setSaturation(5);
             }
             inGame = true;
             playersMessage(ChatColor.AQUA + "START!");

@@ -10,7 +10,7 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         getServer().getPluginCommand("sharedinventory").setExecutor(new SharedInventoryCommand(this));
-        getCommand("sharedinventory").setTabCompleter(new SharedInventoryCompleter());
+        getCommand("sharedinventory").setTabCompleter(new SharedInventoryCompleter(this));
         System.out.println("*********************************************************\n" +
                 "Thank you for using this plugin! <3\n" +
                 "Author: Matistan\n" +
