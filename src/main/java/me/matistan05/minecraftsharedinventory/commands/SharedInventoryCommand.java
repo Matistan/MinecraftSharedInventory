@@ -16,12 +16,16 @@ import java.util.List;
 import java.util.Objects;
 
 public class SharedInventoryCommand implements CommandExecutor {
+    private static Main main;
     public static BukkitTask game;
     public static boolean inGame = false;
     public static List<String> players = new LinkedList<>();
-    Inventory inventory;
     public static List<Boolean> ops = new LinkedList<>();
-    private static Main main;
+    public static Inventory sharedInventory;
+    // Name of a player that changed the inventory (set to "" when command was initiated)
+    public static String playerNameWithDifferentInventory = null;
+    // If a command was initiated by a player or a console, this is set to true
+    public static boolean commandInitiated = false;
 
     public SharedInventoryCommand(Main main) {
         SharedInventoryCommand.main = main;
@@ -33,6 +37,24 @@ public class SharedInventoryCommand implements CommandExecutor {
             p.sendMessage(ChatColor.RED + "You must type an argument. For help, type: /sharedinventory help");
             return true;
         }
+//        if (args[0].equals("print")) {//todo: remove this
+//            if (!(p instanceof Player)) {
+//                p.sendMessage(ChatColor.RED + "You must be a player to use this command!");
+//                return true;
+//            }
+//            Player player = (Player) p;
+//            printInventory(player, player.getInventory());
+//            return true;
+//        }
+//        if (args[0].equals("printShared")) {
+//            if (!(p instanceof Player)) {
+//                p.sendMessage(ChatColor.RED + "You must be a player to use this command!");
+//                return true;
+//            }
+//            Player player = (Player) p;
+//            printInventory(player, sharedInventory);
+//            return true;
+//        }
         if (args[0].equals("help")) {
             if (!p.hasPermission("sharedinventory.help") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
@@ -115,10 +137,6 @@ public class SharedInventoryCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /sharedinventory help");
                 return true;
             }
-            if (inGame) {
-                p.sendMessage(ChatColor.RED + "The game has already started!");
-                return true;
-            }
             int count = 0;
             if (args[1].equals("@a")) {
                 if (args.length != 2) {
@@ -128,6 +146,7 @@ public class SharedInventoryCommand implements CommandExecutor {
                 for (Player target : Bukkit.getOnlinePlayers()) {
                     if (players.contains(target.getName())) continue;
                     players.add(target.getName());
+                    if (inGame) setUpPlayer(target, true);
                     count++;
                 }
                 if (count > 0) {
@@ -141,6 +160,7 @@ public class SharedInventoryCommand implements CommandExecutor {
                 Player target = Bukkit.getPlayerExact(args[i]);
                 if (target == null || players.contains(target.getName())) continue;
                 players.add(target.getName());
+                if (inGame) setUpPlayer(target, true);
                 count++;
             }
             if (count > 0) {
@@ -241,35 +261,53 @@ public class SharedInventoryCommand implements CommandExecutor {
             }
             for (String t : players) {
                 Player player = Bukkit.getPlayerExact(t);
-                if (player == null) continue;
-                player.getInventory().clear();
-                if (main.getConfig().getBoolean("takeAwayOps")) {
-                    ops.add(player.isOp());
-                    player.setOp(false);
-                }
-                player.setGameMode(GameMode.SURVIVAL);
-                player.setHealth(20);
-                player.setFoodLevel(20);
-                player.setSaturation(5);
+                setUpPlayer(player, false);
             }
             inGame = true;
+            playerNameWithDifferentInventory = null;
+            commandInitiated = false;
             playersMessage(ChatColor.AQUA + "START!");
-            inventory = Bukkit.createInventory(null, InventoryType.PLAYER);
+            sharedInventory = Bukkit.createInventory(null, InventoryType.PLAYER);
             game = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < players.size(); i++) {
-                        Player player = Bukkit.getPlayerExact(players.get(i));
-                        if (player == null) continue;
-                        if (!inventoryEqual(player.getInventory(), inventory)) {
-                            for (int j = 0; j < players.size(); j++) {
-                                Player target = Bukkit.getPlayerExact(players.get(j));
-                                if (target == null || i == j) continue;
-                                target.getInventory().setContents(player.getInventory().getContents());
-                                inventory.setContents(player.getInventory().getContents());
-                            }
+                    int changedInventories = 0;
+                    Player playerWithDifferentInventory = null;
+                    for (String player : players) {
+                        Player target = Bukkit.getPlayerExact(player);
+                        if (target == null) continue;
+                        if (!inventoryEqual(sharedInventory, target.getInventory())) {
+                            changedInventories += 1;
+                            if (playerWithDifferentInventory == null) playerWithDifferentInventory = target;
                         }
                     }
+
+                    if (changedInventories >= 1) {
+                        if ((changedInventories > 1 || playerNameWithDifferentInventory == null) && !commandInitiated) {
+                            playersMessage(ChatColor.DARK_RED + "Sync error! Someone has changed the inventory in a not implemented way!");
+                        }
+
+                        Player playerWithNewInventory;
+
+                        if (playerNameWithDifferentInventory != null && !commandInitiated) {
+                            playerWithNewInventory = Bukkit.getPlayerExact(playerNameWithDifferentInventory);
+                            if (playerWithNewInventory == null) {
+                                playerWithNewInventory = playerWithDifferentInventory;
+                            }
+                        } else {
+                            playerWithNewInventory = playerWithDifferentInventory;
+                        }
+
+                        for (String player : players) {
+                            Player target = Bukkit.getPlayerExact(player);
+                            if (target == null || playerWithNewInventory.getName().equals(target.getName())) continue;
+                            target.getInventory().setContents(playerWithNewInventory.getInventory().getContents());
+                        }
+                        sharedInventory.setContents(playerWithNewInventory.getInventory().getContents());
+                    }
+
+                    playerNameWithDifferentInventory = null;
+                    commandInitiated = false;
                 }
             }.runTaskTimer(main, 0, 1);
             return true;
@@ -311,15 +349,40 @@ public class SharedInventoryCommand implements CommandExecutor {
         }
     }
 
-    public static boolean inventoryEqual(Inventory player, Inventory player1) {
-        for (int i = 0; i < 41; i++) {
-            if (i == 36) {
-                i = 40;
-            }
-            if (!Objects.equals(player.getItem(i), player1.getItem(i))) {
+    public static boolean inventoryEqual(Inventory inv1, Inventory inv2) {
+        if (inv1.getSize() != inv2.getSize()) return false;
+        for (int i = 0; i < inv1.getSize(); i++) {
+            // why was I not checking armor slots???
+//            if (i == 36) {
+//                i = 40;
+//            }
+            if (!Objects.equals(inv1.getItem(i), inv2.getItem(i))) {
                 return false;
             }
         }
         return true;
+    }
+
+    public static void setUpPlayer(Player player, boolean setSharedInventory) {
+        if (player == null) return;
+        if (setSharedInventory) player.getInventory().setContents(sharedInventory.getContents());
+        else player.getInventory().clear();
+        if (main.getConfig().getBoolean("takeAwayOps")) {
+            ops.add(player.isOp());
+            player.setOp(false);
+        }
+        player.setGameMode(GameMode.SURVIVAL);
+        player.setHealth(20);
+        player.setFoodLevel(20);
+        player.setSaturation(5);
+    }
+
+    public static void printInventory(Player player, Inventory inventory) {
+        playersMessage("Inventory size: " + inventory.getSize());
+        for (int i = 0; i < inventory.getSize(); i++) {
+            if (inventory.getItem(i) == null) player.sendMessage(i + ": null");
+            else if (inventory.getItem(i).getType().isAir()) player.sendMessage(i + ": air");
+            else player.sendMessage(i + ": " + inventory.getItem(i).getType() + " x" + inventory.getItem(i).getAmount());
+        }
     }
 }
