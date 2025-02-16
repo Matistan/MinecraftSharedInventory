@@ -1,11 +1,10 @@
 package me.matistan05.minecraftsharedinventory;
 
+import me.matistan05.minecraftsharedinventory.classes.SharedInventoryGame;
 import me.matistan05.minecraftsharedinventory.commands.SharedInventoryCommand;
 import me.matistan05.minecraftsharedinventory.commands.SharedInventoryCompleter;
 import me.matistan05.minecraftsharedinventory.listeners.EventListeners;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import static me.matistan05.minecraftsharedinventory.commands.SharedInventoryCommand.reset;
 
 public final class Main extends JavaPlugin {
 
@@ -26,6 +25,8 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        reset();
+        for (SharedInventoryGame game : SharedInventoryCommand.games.values()) {
+            game.reset();
+        }
     }
 }
