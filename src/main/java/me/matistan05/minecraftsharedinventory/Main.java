@@ -2,7 +2,10 @@ package me.matistan05.minecraftsharedinventory;
 
 import me.matistan05.minecraftsharedinventory.commands.SharedInventoryCommand;
 import me.matistan05.minecraftsharedinventory.commands.SharedInventoryCompleter;
+import me.matistan05.minecraftsharedinventory.listeners.EventListeners;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import static me.matistan05.minecraftsharedinventory.commands.SharedInventoryCommand.reset;
 
 public final class Main extends JavaPlugin {
 
@@ -11,6 +14,7 @@ public final class Main extends JavaPlugin {
         saveDefaultConfig();
         getServer().getPluginCommand("sharedinventory").setExecutor(new SharedInventoryCommand(this));
         getCommand("sharedinventory").setTabCompleter(new SharedInventoryCompleter(this));
+        new EventListeners(this);
         new Metrics(this, 21883);
         System.out.println("*********************************************************\n" +
                 "Thank you for using this plugin! <3\n" +
@@ -22,6 +26,6 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        SharedInventoryCommand.reset();
+        reset();
     }
 }
