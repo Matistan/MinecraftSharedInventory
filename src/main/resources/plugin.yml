@@ -11,6 +11,8 @@ permissions:
   sharedinventory.sharedinventory:
     description: Allows the player to use all /sharedinventory commands
     children:
+      sharedinventory.create: true
+      sharedinventory.delete: true
       sharedinventory.add: true
       sharedinventory.remove: true
       sharedinventory.start: true
