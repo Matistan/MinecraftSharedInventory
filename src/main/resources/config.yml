@@ -9,6 +9,8 @@
 timeSetDayOnStart: true
 # Set to true to set the weather to clear automatically when the game starts.
 weatherClearOnStart: true
+# Set to true to clear players inventories when the game starts (otherwise, they will play with first player on the list's inventory).
+clearInventories: true
 # Set to true to not have to use '/sharedinventory add' every time, and instead play with every player on the server
 # (if someone joins in the middle of the game, he will not be playing with everyone)
 playWithEveryone: true
