@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -27,6 +28,7 @@ public class SharedInventoryGame {
     private String playerNameWithDifferentInventory = null;
     // If a command was initiated by a player or a console, this is set to true
     private boolean commandInitiated = false;
+    private String firstPlayer;
 
     public SharedInventoryGame(Main main) {
         this.main = main;
@@ -42,7 +44,7 @@ public class SharedInventoryGame {
         }
         playersToAdd = playersToAdd.stream().filter(name -> !isPlayer(name)).collect(Collectors.toList());
         if (isAlreadyInGame(playersToAdd)) {
-            p.sendMessage(ChatColor.RED + "You can't add players that are in another shared inventory game!");
+            p.sendMessage(ChatColor.RED + "You can't add players that are already in another shared inventory game!");
             return;
         }
         int count = 0;
@@ -90,10 +92,6 @@ public class SharedInventoryGame {
     }
 
     public void listPlayers(CommandSender p) {
-        if (main.getConfig().getBoolean("playWithEveryone")) {
-            p.sendMessage(ChatColor.AQUA + "Everyone is in the game!");
-            return;
-        }
         if (players.isEmpty()) {
             p.sendMessage(ChatColor.RED + "There is no player in your game!");
             return;
@@ -111,26 +109,16 @@ public class SharedInventoryGame {
     }
 
     public void reset() {
+        while (!players.isEmpty()) {
+            removePlayer(players.get(0).getName());
+        }
         if (inGame) {
             inGame = false;
             game.cancel();
         }
-        while (!players.isEmpty()) {
-            removePlayer(players.get(0).getName());
-        }
     }
 
     public void startGame(CommandSender p) {
-        if (main.getConfig().getBoolean("playWithEveryone")) {
-            players.clear();
-            for (Player target : Bukkit.getOnlinePlayers()) {
-                players.add(new SharedInventoryPlayer(target.getName()));
-            }
-        }
-        if (players.isEmpty()) {
-            p.sendMessage(ChatColor.RED + "There are no players in your game!");
-            return;
-        }
         if (inGame) {
             p.sendMessage(ChatColor.YELLOW + "The game has already started!");
             return;
@@ -141,12 +129,17 @@ public class SharedInventoryGame {
         if (main.getConfig().getBoolean("weatherClearOnStart")) {
             p.getServer().getWorlds().get(0).setStorm(false);
         }
-        if (main.getConfig().getBoolean("clearInventories")) {
-            sharedInventory = Bukkit.createInventory(null, InventoryType.PLAYER);
-        } else {
-            Player player = Bukkit.getPlayerExact(players.get(0).getName());
-            if (player == null) sharedInventory = Bukkit.createInventory(null, InventoryType.PLAYER);
-            else sharedInventory.setContents(player.getInventory().getContents());
+        firstPlayer = null;
+        sharedInventory = Bukkit.createInventory(null, InventoryType.PLAYER);
+        if (!main.getConfig().getBoolean("clearInventories")) {
+            for (SharedInventoryPlayer playerObject : players) {
+                Player player = Bukkit.getPlayerExact(playerObject.getName());
+                if (player != null) {
+                    sharedInventory.setContents(player.getInventory().getContents());
+                    firstPlayer = player.getName();
+                    break;
+                }
+            }
         }
         for (SharedInventoryPlayer playerObject : players) {
             setUpPlayer(playerObject.getName(), !main.getConfig().getBoolean("clearInventories"));
@@ -170,7 +163,7 @@ public class SharedInventoryGame {
                 }
 
                 if (changedInventories >= 1) {
-                    if ((changedInventories > 1 || playerNameWithDifferentInventory == null) && !commandInitiated) {
+                    if ((changedInventories > 1 || playerNameWithDifferentInventory == null) && !commandInitiated && main.getConfig().getBoolean("showSyncErrors")) {
                         playersMessage(ChatColor.DARK_RED + "Sync error! Someone has changed the inventory in a not implemented way!");
                     }
 
@@ -202,14 +195,21 @@ public class SharedInventoryGame {
     private void removePlayer(String name) {
         SharedInventoryPlayer playerObject = getPlayer(name);
         if (playerObject == null) return;
-        if (main.getConfig().getBoolean("takeAwayOps")) {
-            OfflinePlayer target = Bukkit.getOfflinePlayer(name);
-            target.setOp(playerObject.isOp());
-        }
-        Player player = Bukkit.getPlayerExact(name);
-        if (player != null) {
-            player.setGameMode(playerObject.getOldGameMode());
-            player.getInventory().setContents(playerObject.getOldInventory());
+        if (inGame) {
+            if (main.getConfig().getBoolean("takeAwayOps")) {
+                OfflinePlayer target = Bukkit.getOfflinePlayer(name);
+                target.setOp(playerObject.isOp());
+            }
+            Player player = Bukkit.getPlayerExact(name);
+            if (player != null) {
+                if (main.getConfig().getBoolean("survivalOnStart")) {
+                    player.setGameMode(playerObject.getOldGameMode());
+                }
+                if (main.getConfig().getBoolean("clearInventories") || !name.equals(firstPlayer)) {
+                    if ((playerObject.getOldInventory() != null)) player.getInventory().setContents(playerObject.getOldInventory());
+                    else player.getInventory().clear();
+                }
+            }
         }
         players.removeIf(p -> p.getName().equals(name));
     }
@@ -219,8 +219,10 @@ public class SharedInventoryGame {
         if (player == null) return;
         SharedInventoryPlayer playerObject = getPlayer(player.getName());
         if (playerObject == null) return;
-        playerObject.setOldGameMode(player.getGameMode());
-        player.setGameMode(GameMode.SURVIVAL);
+        if (main.getConfig().getBoolean("survivalOnStart")) {
+            playerObject.setOldGameMode(player.getGameMode());
+            player.setGameMode(GameMode.SURVIVAL);
+        }
         playerObject.setOldInventory(player.getInventory().getContents().clone());
         if (setSharedInventory) player.getInventory().setContents(sharedInventory.getContents());
         else player.getInventory().clear();
@@ -259,7 +261,27 @@ public class SharedInventoryGame {
         return players.stream().anyMatch(p -> p.getName().equals(name));
     }
 
+    public boolean inProgress() {
+        return inGame;
+    }
+
+    public String getPlayerNameWithDifferentInventory() {
+        return playerNameWithDifferentInventory;
+    }
+
+    public void setPlayerNameWithDifferentInventory(String name) {
+        this.playerNameWithDifferentInventory = name;
+    }
+
     public Collection<SharedInventoryPlayer> getPlayers() {
         return players;
+    }
+
+    public void setCommandInitiated(boolean initiated) {
+        this.commandInitiated = initiated;
+    }
+
+    public ItemStack[] getSharedInventoryContents() {
+        return sharedInventory.getContents();
     }
 }
