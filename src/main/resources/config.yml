@@ -9,11 +9,12 @@
 timeSetDayOnStart: true
 # Set to true to set the weather to clear automatically when the game starts.
 weatherClearOnStart: true
-# Set to true to clear players inventories when the game starts (otherwise, they will play with first player on the list's inventory).
+# Set to true to set survival mode for all players when the game starts.
+survivalOnStart: true
+# Set to true to show errors in the chat when a player changed his inventory in a not implemented way. (in rare scenarios may cause item duplication or disappearance)
+showSyncErrors: true
+# Set to true to clear players inventories when the game starts (otherwise, they will play with the inventory of the first online player on the list).
 clearInventories: true
-# Set to true to not have to use '/sharedinventory add' every time, and instead play with every player on the server
-# (if someone joins in the middle of the game, he will not be playing with everyone)
-playWithEveryone: true
 # Set to true to take away OPs for the duration of the game.
 takeAwayOps: true
 # Set to true to enable permission checks.
