@@ -25,11 +25,13 @@ With this fun little plugin, everyone shares the same inventory. This makes the 
 
 - drag the .jar file from the [Release tab](https://github.com/Matistan/MinecraftSharedInventory/releases) to your plugins folder on your server.
 - create a game using `/sharedinventory create <game>`
+- add players to the game using `/sharedinventory add <game> <player> <player> ...`, or add everyone using `/sharedinventory add <game> @a`
 - type `/sharedinventory start <game>` to start!
-- if you don't want to play with every player on the server, change the rule `playWithEveryone` to false, and choose the players using `/sharedinventory add` command
 
 ## Commands
 
+- `/sharedinventory create <game>` - creates a game of shared inventory
+- `/sharedinventory delete <game>` - deletes a game of shared inventory
 - `/sharedinventory add <game> <player> <player> ... ` - adds players to the game
 - `/sharedinventory add <game> @a` - adds all players to the game
 - `/sharedinventory remove <game> <player> <player> ... ` - removes players rom the game
@@ -44,14 +46,47 @@ With this fun little plugin, everyone shares the same inventory. This makes the 
 
 Use the command `/sharedinventory rules` or edit the `plugins/MinecraftSharedInventory/config.yml` file to change the following options:
 
-| Key                 | Description                                                                                                                          | Type    | recommended                                                   |
-|---------------------|--------------------------------------------------------------------------------------------------------------------------------------|---------|---------------------------------------------------------------|
-| timeSetDayOnStart   | Set to true to set the time to day automatically when the game starts.                                                               | boolean | true                                                          |
-| weatherClearOnStart | Set to true to set the weather to clear automatically when the game starts.                                                          | boolean | true                                                          |
-| clearInventories    | Set to true to clear players inventories when the game starts (otherwise, they will play with first player on the list's inventory). | boolean | true                                                          |
-| playWithEveryone    | Set to true to not have to use '/sharedinventory add' every time, and instead play with every player on the server                   | boolean | true                                                          |
-| takeAwayOps         | Set to true to take away OPs for the duration of the game.                                                                           | boolean | true                                                          |
-| usePermissions      | Set to true to require users to have permission to use certain commands.                                                             | boolean | false; true if you don't trust the people you're playing with |
+| Key                 | Description                                                                                                                                                          | Type    | recommended                                          |
+|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|------------------------------------------------------|
+| timeSetDayOnStart   | Set to true to set the time to day automatically when the game starts.                                                                                               | boolean | true                                                 |
+| weatherClearOnStart | Set to true to set the weather to clear automatically when the game starts.                                                                                          | boolean | true                                                 |
+| survivalOnStart     | Set to true to set survival mode for all players when the game starts.                                                                                               | boolean | true                                                 |
+| showSyncErrors      | Set to true to show errors in the chat when a player changed his inventory in a not implemented way. (in rare scenarios may cause item duplication or disappearance) | boolean | true                                                 |
+| clearInventories    | Set to true to clear players inventories when the game starts (otherwise, they will play with the inventory of the first online player on the list).                 | boolean | true                                                 |
+| takeAwayOps         | Set to true to take away OPs for the duration of the game.                                                                                                           | boolean | true                                                 |
+| usePermissions      | Set to true to require users to have permission to use certain commands.                                                                                             | boolean | true; false if you trust players you're playing with |
+
+## Quick info about sync errors
+
+To prevent race conditions and item duplications or disappearances, plugin is looking for events that can change player's inventory. However, some events are impossible to keep track of, or I just haven't implemented them yet.
+Sync errors are indicated by a dark red message in the chat (can be disabled in the config). If you see this message, please report it [here](https://github.com/Matistan/MinecraftSharedInventory/issues).
+
+### Some known sync error occurrences
+
+Sync errors can occur when:
+
+- scroll clicking an item which is in inventory (not hotbar)
+- inserting a disc into a jukebox
+- clicking a lodestone with a compass
+- removing a lodestone that a compass is pointing to
+- placing armor stand
+- placing item in item frame
+- placing book in a lectern
+- removing book from a lectern
+- signing a book
+- picking a fish with a water bucket
+- filling respawn anchor with glowstone
+- throwing an ender eye
+- spawning an entity with a spawn egg
+- placing a saddle on a pig/horse/strider
+- using bone meal
+- right-clicking an armor from a hotbar
+- using name tags
+- placing end crystals
+- filling up crossbow with an arrow
+
+Most of them are not so hard to implement, and will probably be fixed in a future. Again, it does not necessarily mean that some items will disappear or duplicate, it will only happen
+if two inventory events happen in the same in-game tick.
 
 ## Permissions
 
